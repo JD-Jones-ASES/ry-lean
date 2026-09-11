@@ -5,7 +5,8 @@ import RY.Rule
 
 `D N` is a supremum over a set of naturals bounded by `N`, so it is attained, monotone and
 at most `N`. The construction gives `D (M ^ q) ≥ K ^ q` for `M = m ^ (2^(2s+1))` and
-`K = K_s`; the block lemma turns that into `D N ≥ M ^ (-ρ) · N ^ ρ` for every `N ≥ 1` and
+`K = K_s`; the block lemma turns that into `D N ≥ C · N ^ ρ` (with `C = M ^ (-ρ)` for `ρ > 0` and
+`C = 1` for `ρ ≤ 0`) for every `N ≥ 1` and
 every `ρ ≤ log K / log M`, by taking `q = Nat.log M N`, so that `M ^ q ≤ N < M ^ (q+1)`.
 The liminf statement then follows by letting `ρ` increase to the exponent, with
 `Filter.le_liminf_of_le`; its `IsCoboundedUnder (· ≥ ·)` side condition is paid by
@@ -80,9 +81,8 @@ theorem one_le_D (N : ℕ) (hN : 1 ≤ N) : 1 ≤ D N := by
 
 /-! ## The construction, placed inside `{1, …, N}` -/
 
-set_option linter.unusedVariables false in
 /-- The block set, shifted by `1`, sits inside `{1, …, m ^ Y}`. -/
-theorem blockSet_shift_subset (m : ℕ) (hm : 0 < m) (S : ℕ → Finset ℤ)
+theorem blockSet_shift_subset (m : ℕ) (_hm : 0 < m) (S : ℕ → Finset ℤ)
     (hS : ∀ i, ∀ d ∈ S i, 0 ≤ d ∧ d < (m : ℤ)) (Y : ℕ) :
     (blockSet m S Y).image (fun x => x + 1) ⊆ Finset.Icc 1 ((m ^ Y : ℕ) : ℤ) := by
   intro z hz
@@ -121,8 +121,8 @@ private theorem rpow_natCast_mul (x : ℝ) (hx : 0 ≤ x) (ρ : ℝ) (n : ℕ) :
   rw [mul_comm, Real.rpow_mul hx, Real.rpow_natCast]
 
 /-- **The block lemma.** If `D (M ^ q) ≥ K ^ q` for every `q` and `ρ ≤ log K / log M`, then
-`D N ≥ C N ^ ρ` for every `N ≥ 1`, with `C = M ^ (-ρ)` (any positive `C` will do for
-`ρ < 0`, where the bound is trivial). -/
+`D N ≥ C N ^ ρ` for every `N ≥ 1`, with `C = M ^ (-ρ)` (when `ρ ≤ 0` the proof takes `C = 1`, since then
+`N ^ ρ ≤ 1 ≤ D N` for `N ≥ 1`). -/
 theorem D_ge_of_blocks (M K : ℕ) (hM : 2 ≤ M) (hK : 1 ≤ K)
     (hDq : ∀ q : ℕ, K ^ q ≤ D (M ^ q)) (ρ : ℝ)
     (hρ : ρ ≤ Real.log (K : ℝ) / Real.log (M : ℝ)) :

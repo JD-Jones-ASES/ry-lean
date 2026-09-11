@@ -1,12 +1,18 @@
 # ry-lean
 
 A Lean 4 proof of Younis's lower-bound construction for sets of integers with no
-configuration `{x, x + y, x + y²}`, and a new exponent.
+configuration `{x, x + y, x + y²}`, and a larger exponent than the one in the source paper.
+
+**Start here.** Read the five theorem statements in [Challenge.lean](Challenge.lean) and the five
+definitions above them; everything else in this repository exists to prove those five statements
+unchanged. [PROOF.md](PROOF.md) gives the mathematics; [VERIFICATION.md](VERIFICATION.md) the
+mechanical checks.
 
 **The problem.** Call `A ⊆ ℤ` *configuration-free* if there are no integers `x` and `y ≠ 0`
 with `x`, `x + y`, `x + y²` all in `A`. This is the model case of the polynomial Szemerédi
 theorem: configuration-free subsets of `{1, …, N}` have size `o(N)` (Bergelson–Leibman), in
-fact at most `N (log N)^(−c)` (Peluse–Prendiville). How large can they be? Younis (2019)
+fact at most `N (log N)^(−c)` (Peluse–Prendiville, *A polylogarithmic bound in the nonlinear Roth
+theorem*, IMRN 2022). How large can they be? Younis (2019)
 constructed configuration-free subsets of `{1, …, N}` of size `N^(0.7685… − ε)`.
 
 **What is proved.**
@@ -29,6 +35,10 @@ constructed configuration-free subsets of `{1, …, N}` of size `N^(0.7685… �
   `γ₀ = 1/2 + log 833 / (6 log 65) = 0.768503…` (his data: `m = 65`, `|R₁| = 7`, `|R₂| = 17`).
   Then `γ₀ < γ` and `0.7702 < γ < 0.77029`, each proved by exact comparisons of integer powers.
 
+The identifiers `recordExponent`, `record_pointwise`, `record_liminf`, `younis_lt_record` and
+`record_exponent_bounds` name the exponent at `m = 145`; the word carries no claim beyond the
+searches recorded under Prior art below, and no theorem here asserts that the exponent is a record.
+
 All five statements are unconditional theorems in Lean, checked by the kernel with no axioms
 beyond `propext`, `Classical.choice`, `Quot.sound`. The mathematics is in [PROOF.md](PROOF.md).
 
@@ -44,7 +54,13 @@ beyond `propext`, `Classical.choice`, `Quot.sound`. The mathematics is in [PROOF
 * [Test/Axioms.lean](Test/Axioms.lean) — the axiom audit over every declaration of `RY` and
   `NonlinearRoth`.
 * [scripts/check_chain.py](scripts/check_chain.py) — a standalone Python check (standard
-  library only) of the finite data and of the integer power comparisons.
+  library only) of the finite data, the integer power comparisons, the truncated rule's block
+  counts, and a direct enumeration at three digits, with failing controls.
+* `scripts/check-source.py` — rejects `sorry`, `axiom`, `native_decide` and similar tokens in
+  `RY/` and `Solution.lean`. `scripts/verify-comparator.sh` — the Linux script for the
+  statement comparison and independent kernel replay described under Verify;
+  `scripts/landrun-wrapper.py` (with `scripts/test-landrun-wrapper.py`, its tests) is the shim it
+  uses to preserve Comparator's `--` argument delimiter when invoking the pinned Landrun sandbox.
 * [PROOF.md](PROOF.md) — statements and proofs in ordinary mathematics.
 * [VERIFICATION.md](VERIFICATION.md) — the checks performed at this snapshot and how to
   repeat them. [DISCLOSURE.md](DISCLOSURE.md) — authorship and the use of AI.
@@ -62,16 +78,18 @@ lake build
 ```
 
 `lake build` compiles the library, `Challenge`, `Solution`, and `Test` (the axiom audit,
-which fails the build on any unexpected axiom). `python3 scripts/check-source.py` rejects
-`sorry`, `axiom`, `native_decide` and similar tokens in `RY/` and `Solution.lean`. The
-standalone data check is
+which fails the build on any unexpected axiom, on too few audited constants, or on a missing
+compared theorem). `python3 scripts/check-source.py` rejects `sorry`, `axiom`, `native_decide`,
+kernel-bypass options and similar tokens in `RY/`, `Solution.lean` and `Test/`. The standalone
+data check is
 
 ```sh
 python3 scripts/check_chain.py
 ```
 
-On Linux, `scripts/verify-comparator.sh` runs the registry's own statement comparison
-(Comparator) and independent kernel replay (NanoDa) at their pinned revisions.
+On Linux, `scripts/verify-comparator.sh` runs the statement-comparison tool the registry uses
+(Comparator, `leanprover/comparator`) and an independent kernel replay (NanoDa,
+`robsimmons/nanoda_lib`) at the revisions pinned in the script.
 
 ## Prior art
 
@@ -86,14 +104,16 @@ Formal Proofs, the Coq/Rocq opam archives, the Lean Zulip archive, GitHub code s
 the web (including Green's list of open problems, Tao's blog, and MathOverflow). Nearby but
 non-overlapping: Roth's theorem for three-term arithmetic progressions is formalized in
 Mathlib and in Isabelle/HOL (the linear configuration `{x, x + y, x + 2y}`, upper-bound
-side); Szemerédi's theorem via density Hales–Jewett is registered at Palomar; a registry
-entry on the Furstenberg–Sárközy lower bound (square-difference-free sets, the two-point
-condition) formalizes a digit construction in Ruzsa's lineage but does not treat the
-three-point configuration or Younis's theorem. The best Furstenberg–Sárközy exponent
-published, Krachun's `0.7527…` (2026), transfers to this problem — every
-square-difference-free set is configuration-free — and lies below both exponents compared
-here. Lewko (2026) gives a `|F|^(2/3)` construction for this configuration in certain finite
-fields, which does not transfer to the integers.
+side); Szemerédi's theorem via density Hales–Jewett is Palomar entry PALOMAR-2026-09-06-000005;
+and Palomar entry PALOMAR-2026-08-26-000004, by the present author, formalizes a lower bound for
+the Furstenberg–Sárközy problem (square-difference-free sets, the two-point condition; exponent
+`0.7537…`) by a digit construction in Ruzsa's lineage, but does not treat the three-point
+configuration or Younis's theorem. Every square-difference-free set is configuration-free, so
+Furstenberg–Sárközy lower bounds transfer to this problem: the best in the published literature,
+Krachun's `0.7527964558…` (arXiv:2608.01325, 2026), and the registry entry's `0.7537…` both lie
+below the two exponents compared here. Lewko, *An improved non-linear Roth-type theorem in finite
+fields* (arXiv:2604.27501, 2026), gives a `|F|^(2/3)` construction for this configuration over
+certain non-prime finite fields, which does not transfer to the integers.
 
 ## Authorship
 

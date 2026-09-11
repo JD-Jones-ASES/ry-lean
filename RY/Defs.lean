@@ -54,9 +54,10 @@ def allDigits (m : ℕ) : Finset ℤ := (Finset.range m).image fun d : ℕ => (d
 `phase s t` is Younis's `h` truncated at depth `s`: the type of an *odd* position seen at
 phase `t`, with every phase `≥ 2s+1` collapsed to type `1`. `typ s t i` is `f_s t i`; the
 rule the construction uses is `typ s 0`. Writing `v` for the `2`-adic valuation,
-`typ s t i = phase s (t + v i)` away from `i = 0`, which is Younis's rule (2.1) at `k = 2`:
-odd positions have type `0`, position `0` has type `1`, and an even `i ≥ 2` has type `1`
-or `2` according to the parity of `v i`. -/
+`typ s t i = phase s (t + v i)` away from `i = 0`, which agrees with Younis's rule (2.1) at
+`k = 2` on positions with `v i ≤ 2s` — odd positions have type `0`, position `0` has type `1`,
+and an even `i ≥ 2` has type `1` or `2` according to the parity of `v i` — while positions with
+`v i ≥ 2s + 1` are collapsed to type `1`. -/
 
 /-- `h_s t`: the digit type of an odd position at phase `t`, truncated at depth `s`. -/
 def phase (s t : ℕ) : ℕ :=

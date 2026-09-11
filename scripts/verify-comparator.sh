@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Trusted tool revisions in PalomarSubmission c605f23466450a52999fcfb3c6d68ed8febc56bf.
-# Verified against the official repository on 2026-09-07.
+# Tool revisions pinned to the ones the Palomar verifier uses, as recorded in the registry's public
+# repository github.com/PalomarRegistry/PalomarSubmission at commit c605f23466450a52999fcfb3c6d68ed8febc56bf
+# (read 2026-09-07). Each is a commit in the public repository cloned below.
 readonly comparator_revision=575674928e239f5bc452aab72d1dd7b0f1326494
 readonly exporter_revision=15f6055e299ad5b89345e533cc2192f4cc00f659
 readonly nanoda_revision=68d5ca9db226849b41a6fff59d796ff19d0a8840
@@ -87,6 +88,8 @@ CGO_ENABLED=0 GOBIN="$verifier_cache/bin" \
 cargo build --release --locked --manifest-path "$verifier_cache/nanoda/Cargo.toml"
 
 cd -- "$project_dir"
+python3 scripts/test-landrun-wrapper.py
+python3 scripts/check-source.py
 lake exe cache get
 lake build
 lake build Test.Axioms

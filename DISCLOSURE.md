@@ -11,7 +11,7 @@ Anthropic's Claude models did the work, run through Claude Code:
 
 * Claude Fable 5.1 planned the formalization (the truncated periodic counting, the digit
   congruence argument, the module layout, the statements in `Challenge.lean`), reviewed the
-  lanes' output, and wrote the documentation.
+  subagents' output, and wrote the documentation.
 * Claude Opus subagents, several in parallel, reviewed the statements against the source
   paper, ran the literature and formalization searches recorded in `README.md`, wrote the
   Lean proofs module by module, and audited the result (statement fidelity, axioms,

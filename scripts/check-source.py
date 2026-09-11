@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
-"""Reject proof placeholders and prohibited declarations in RY and Solution.
+"""Reject proof placeholders and prohibited declarations in RY, Solution and Test.
 
-Challenge is deliberately outside this check: it contains the submitted statement.
-The compiled Test.Axioms module and independent NanoDa replay are separate checks.
+Rejected outside comments and strings: sorry, admit, axiom, unsafe, partial, native_decide,
+implemented_by, extern, Lean.ofReduceBool, and the kernel-bypass options debug.skipKernelTC and
+debug.byAsSorry. Challenge.lean carries the submitted statements with intentional sorry
+placeholders, so it is checked only for the two kernel-bypass options. The compiled Test.Axioms
+module and an independent NanoDa replay are separate checks.
 """
 
 from pathlib import Path
 import re
 import sys
 
-FORBIDDEN = re.compile(r"\b(?:sorry|admit|axiom|unsafe|partial|native_decide)\b|\bLean\.ofReduceBool\b")
+FORBIDDEN = re.compile(
+    r"\b(?:sorry|admit|axiom|unsafe|partial|native_decide|implemented_by|extern)\b"
+    r"|\bLean\.ofReduceBool\b|\bdebug\.skipKernelTC\b|\bdebug\.byAsSorry\b")
+KERNEL_BYPASS = re.compile(r"\bdebug\.skipKernelTC\b|\bdebug\.byAsSorry\b")
 
 
 def code_without_comments_or_strings(source):
@@ -81,6 +87,10 @@ def main():
         print("Source guard requires RY/*.lean and Solution.lean", file=sys.stderr)
         return 1
     files.append(solution)
+    files.extend(sorted((root / "Test").rglob("*.lean")))
+    files.append(root / "Test.lean")
+    files.append(root / "RY.lean")
+    challenge = root / "Challenge.lean"
     failures = 0
     for path in files:
         try:
@@ -92,9 +102,19 @@ def main():
         for line, token in found:
             print(f"{path.relative_to(root)}:{line}: prohibited proof token {token}", file=sys.stderr)
             failures += 1
+    try:
+        cleaned = code_without_comments_or_strings(challenge.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError) as error:
+        print(f"Challenge.lean: {error}", file=sys.stderr)
+        failures += 1
+    else:
+        for match in KERNEL_BYPASS.finditer(cleaned):
+            line = cleaned.count("\n", 0, match.start()) + 1
+            print(f"Challenge.lean:{line}: prohibited option {match.group()}", file=sys.stderr)
+            failures += 1
     if failures:
         return 1
-    print(f"Source guard passed for {len(files)} proof files; Challenge excluded.")
+    print(f"Source guard passed for {len(files)} proof files; Challenge checked for kernel-bypass options only.")
     return 0
 
 

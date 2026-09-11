@@ -26,7 +26,7 @@ sources:
   - title: "Lower bounds in the polynomial Szemerédi theorem"
     authors: ["Khalid Younis"]
     id: "arXiv:1908.06058"
-    type: "paper"
+    type: "article"
     location: "https://arxiv.org/abs/1908.06058"
     relationship: "formalizes"
     author_endorsement: "not-contacted"
@@ -40,14 +40,14 @@ sources:
   - title: "Difference sets without squares"
     authors: ["Imre Z. Ruzsa"]
     id: "doi:10.1007/BF02454169"
-    type: "paper"
+    type: "article"
     location: "https://doi.org/10.1007/BF02454169"
     relationship: "background"
     author_endorsement: "not-contacted"
     note: "Periodica Mathematica Hungarica 15 (1984), 205-209. The base-m digit construction that Younis's theorem extends; Younis's modulus 65 is Ruzsa's."
   - title: "An improved lower bound related to the Furstenberg–Sárközy theorem"
     authors: ["Mark Lewko"]
-    type: "paper"
+    type: "article"
     location: "https://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i1p32"
     relationship: "background"
     author_endorsement: "not-contacted"
@@ -55,7 +55,7 @@ sources:
   - title: "Square-difference-free sets of size Ω(n^0.7334...)"
     authors: ["Richard Beigel", "William Gasarch"]
     id: "arXiv:0804.4892"
-    type: "paper"
+    type: "article"
     location: "https://arxiv.org/abs/0804.4892"
     relationship: "background"
     author_endorsement: "not-contacted"
@@ -63,7 +63,7 @@ sources:
   - title: "A polylogarithmic bound in the nonlinear Roth theorem"
     authors: ["Sarah Peluse", "Sean Prendiville"]
     id: "doi:10.1093/imrn/rnaa261"
-    type: "paper"
+    type: "article"
     location: "https://doi.org/10.1093/imrn/rnaa261"
     relationship: "background"
     author_endorsement: "not-contacted"
@@ -71,7 +71,7 @@ sources:
   - title: "Polynomial extensions of van der Waerden's and Szemerédi's theorems"
     authors: ["Vitaly Bergelson", "Alexander Leibman"]
     id: "doi:10.1090/S0894-0347-96-00194-4"
-    type: "paper"
+    type: "article"
     location: "https://doi.org/10.1090/S0894-0347-96-00194-4"
     relationship: "background"
     author_endorsement: "not-contacted"
@@ -79,7 +79,7 @@ sources:
   - title: "Square-Difference-Free Sets beyond the Three-Quarter Barrier"
     authors: ["Dmitry Krachun"]
     id: "arXiv:2608.01325"
-    type: "paper"
+    type: "article"
     location: "https://arxiv.org/abs/2608.01325"
     relationship: "background"
     author_endorsement: "not-contacted"
@@ -187,7 +187,7 @@ alignment:
         square-difference-free; no nonzero difference of R_2 is the square of a difference
         of R_1. Conclusion: for every rho below the exponent, a constant C > 0 and, for every
         N >= 1, a configuration-free subset of Finset.Icc 1 N of cardinality at least C N^rho.
-    - source: "Younis, arXiv:1908.06058, Theorem 1.1 — the same statement at new data (m = 145, |R_1| = 10, |R_2| = 32)"
+    - source: "Not in the source paper: Theorem 1.5 (k = 2) instantiated at new data m = 145, |R_1| = 10, |R_2| = 32 — the analogue of Younis's Theorem 1.1, which is the instance at m = 65"
       lean: "NonlinearRoth.record_pointwise"
       module: "Solution"
       status: "proved"

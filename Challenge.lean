@@ -3,13 +3,15 @@ import Mathlib
 /-!
 # Large sets of integers with no configuration `{x, x + y, x + y²}`
 
-A set `A` of integers is *configuration-free* if it contains no three integers of the
-form `x, x + y, x + y²` with `y ≠ 0`. (For `y = 1` the three integers are `x, x + 1, x + 1`,
+A set `A` of integers is *configuration-free* if there are no integers `x` and `y ≠ 0` with
+`x`, `x + y` and `x + y²` all in `A`. (For `y = 1` the three integers are `x, x + 1, x + 1`,
 so a configuration-free set contains no two consecutive integers; for `y = -1` they are
 `x, x - 1, x + 1`.) This is the model case, with polynomials `y` and `y²`, of the polynomial
 Szemerédi theorem: Bergelson and Leibman proved that a configuration-free subset of
-`{1, …, N}` has size `o(N)`, and Peluse and Prendiville proved the quantitative bound
-`N (log N)^(-c)` for some `c > 0`. The question here is the other direction: how large can a
+`{1, …, N}` has size `o(N)`, and Peluse and Prendiville proved the bound `N (log N)^(-c)` for
+some `c > 0` (*A polylogarithmic bound in the nonlinear Roth theorem*, IMRN 2022; their
+*Quantitative bounds in the nonlinear Roth theorem*, Invent. Math. 2024, gives
+`N (log log N)^(-c)`). The question here is the other direction: how large can a
 configuration-free subset of `{1, …, N}` be?
 
 ## The construction
@@ -24,8 +26,9 @@ Fix a square-free modulus `m ≥ 2` and two nonempty sets of residues `R₁, R�
 These two conditions are exactly Younis's chain condition — no nonzero difference of two
 elements of `R_(n+1)` is the square of a difference of two elements of `R_n`, modulo `m` —
 for the period-two chain `R₀ = ℤ/m, R₁, R₂, R₁, R₂, …`: the first is the edge `R₀ → R₁`,
-and, since squares of `R₂`-differences are in particular squares, it also gives the edge
-`R₂ → R₁`; the second is the edge `R₁ → R₂`.
+and, since squares of `R₂`-differences and of `R₁`-differences are in particular squares, it
+also gives the edge `R₂ → R₁` and the self-pairing `R₁ → R₁` that rule (2.1) forces at position
+`0` (which is paired with itself, `2 · 0 = 0`); the second is the edge `R₁ → R₂`.
 
 Younis (*Lower bounds in the polynomial Szemerédi theorem*, arXiv:1908.06058, Theorems 1.1
 and 1.5) showed that from such data one obtains, for every `ε > 0`, configuration-free
@@ -55,8 +58,9 @@ The two residue sets at `m = 145` are
   `R₂ = {3, 12, 13, 16, 21, 24, 25, 34, 35, 38, 43, 46, 47, 56, 57, 60, 68, 69, 78, 79,
          82, 91, 100, 104, 113, 122, 123, 125, 126, 135, 136, 144}`.
 
-They appear only in the Solution: the statements below fix the exponent numerically and
-assert existence, so that the Challenge is independent of the particular witnesses.
+They are shown here for orientation only; no statement below mentions them. The statements fix
+the exponent numerically and assert existence, so the Challenge is independent of the particular
+witnesses, which live in the Solution.
 
 ## Conventions
 
@@ -101,7 +105,8 @@ elements of `R₂` differing by the square of a difference of two elements of `R
 every `ρ` below the exponent `1/2 + log |R₁| / (3 log m) + log |R₂| / (6 log m)` there is a
 constant `C > 0` such that every interval `{1, …, N}` contains a configuration-free set of
 size at least `C N^ρ`. This is Theorem 1.5 of arXiv:1908.06058 with `k = 2` for the chain
-`ℤ/m, R₁, R₂, R₁, R₂, …`, whose exponent (1.2) evaluates to the displayed one. -/
+`ℤ/m, R₁, R₂, R₁, R₂, …`, whose exponent (1.2) evaluates to the displayed one (Younis writes
+only "`m` square-free"; `2 ≤ m` is made explicit here, as (1.2) is stated in `log_m`). -/
 theorem younis_period_two (m : ℕ) (hm : 2 ≤ m) (hsf : Squarefree m)
     (R₁ R₂ : Finset (ZMod m)) (h₁ : R₁.Nonempty) (h₂ : R₂.Nonempty)
     (hR₁ : ∀ a ∈ R₁, ∀ b ∈ R₁, ∀ d : ZMod m, a - b = d ^ 2 → a = b)

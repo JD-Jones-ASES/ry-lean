@@ -8,8 +8,8 @@ The rule `typ s 0` assigns to each position a digit type in `{0, 1, 2}` — `ℤ
 proved about it.
 
 * **Edge validity.** For every `ℓ`, either the digit set at `2 ℓ` is `R₁` (and then the
-  hypothesis `hR₁` applies, whatever the digit set at `ℓ` is, because a difference of
-  residues is an arbitrary residue), or it is `R₂` and the digit set at `ℓ` is `R₁` (and
+  hypothesis `hR₁` applies, whatever the digit set at `ℓ` is, because `hR₁` is stated for an
+  arbitrary square `d ^ 2`), or it is `R₂` and the digit set at `ℓ` is `R₁` (and
   then `hR₂` applies). The pair `(R₂, R₂)` never occurs. Combined with `RY.Avoid` this
   makes `blockSet m (ruleSet R₁ R₂ s) Y` configuration-free for every `Y`.
 * **Cardinality.** `(ruleSet R₁ R₂ s i).card = sizeAt m |R₁| |R₂| s 0 i`.
@@ -95,11 +95,6 @@ theorem typ_of_ge (s t i : ℕ) (ht : 2 * s + 1 ≤ t) : typ s t i = 1 := by
   · have hle : 2 * s + 1 ≤ t + padicValNat 2 i := by omega
     simp only [phase, if_pos hle]
 
-/-- Types are `0`, `1` or `2`. -/
-theorem typ_lt_three (s t i : ℕ) : typ s t i < 3 := by
-  simp only [typ, phase]
-  split_ifs <;> omega
-
 /-- **Edge validity.** The digit set at `2 ℓ` is `R₁`, or it is `R₂` and the digit set at
 `ℓ` is `R₁`. -/
 theorem typ_edge (s ℓ : ℕ) : typ s 0 (2 * ℓ) = 1 ∨ (typ s 0 (2 * ℓ) = 2 ∧ typ s 0 ℓ = 1) := by
@@ -157,16 +152,6 @@ theorem allDigits_card (m : ℕ) : (allDigits m).card = m := by
     exact_mod_cast h
   show ((Finset.range m).image fun d : ℕ => (d : ℤ)).card = m
   rw [Finset.card_image_of_injective _ hinj, Finset.card_range]
-
-/-- Every residue is the reduction of a digit: this is what makes the `R₀ = ℤ/m` edge an
-instance of `hR₁` with an arbitrary `d`. -/
-theorem exists_mem_allDigits {m : ℕ} (hm : 0 < m) (r : ZMod m) :
-    ∃ x ∈ allDigits m, ((x : ZMod m)) = r := by
-  have : NeZero m := ⟨hm.ne'⟩
-  refine ⟨(r.val : ℤ), ?_, ?_⟩
-  · simp only [allDigits, Finset.mem_image, Finset.mem_range]
-    exact ⟨r.val, ZMod.val_lt r, rfl⟩
-  · simp [ZMod.natCast_val, ZMod.cast_id]
 
 /-! ## `ruleSet` -/
 

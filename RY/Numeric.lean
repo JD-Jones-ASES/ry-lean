@@ -19,7 +19,8 @@ namespace NonlinearRoth
 
 /-! ## Two translation lemmas -/
 
-/-- `p / q < log a / log b`, from the power comparison `b ^ p < a ^ q`. -/
+/-- `p / q < log a / log b`, from the power comparison `b ^ p < a ^ q`. (`_ha` is unused; it is
+kept so that the two translation lemmas have the same signature.) -/
 theorem lt_log_div_log (a b : ℝ) (p q : ℕ) (_ha : 2 ≤ a) (hb : 2 ≤ b) (hq : 0 < q)
     (h : b ^ p < a ^ q) : (p : ℝ) / q < Real.log a / Real.log b := by
   have hb1 : (1 : ℝ) < b := by linarith

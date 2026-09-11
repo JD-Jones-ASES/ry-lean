@@ -1,8 +1,11 @@
 # The mathematics
 
 This document states the theorems proved in this repository and gives the proofs in
-ordinary mathematical language. Section 8 explains how the Lean development mirrors them.
-Everything here is proved in Lean; nothing is cited as an axiom.
+ordinary mathematical language. Every numbered Theorem, Lemma and Proposition below is proved in
+Lean, with no axioms beyond `propext`, `Classical.choice` and `Quot.sound`. The comparisons with
+[Y] (end of §1, the closing paragraphs of §3, and §7), the description of the untruncated rule in
+§2–§3, and the per-period counts of §4 are exposition: true, but not what the Lean proves. Where
+the Lean reaches a statement by a different route than the prose, §8 says so.
 
 ## 1. Statements
 
@@ -43,6 +46,19 @@ for every `ρ < γ` there is `C > 0` with `D(N) ≥ C · N^ρ` for all `N ≥ 1`
 **Theorem C (the exponent, located).** Younis's exponent is `γ₀ = γ(65, 7, 17) =
 1/2 + log 833 / (6 log 65) = 0.768503822930…`. Then `γ₀ < γ`, and `0.7702 < γ < 0.77029`.
 
+Context. Configuration-free subsets of `[N]` have size `o(N)` [BL], in fact at most
+`N (log N)^(−c)` for some `c > 0` [PP1] (an earlier bound `N (log log N)^(−c)` is [PP2]). The
+two-point analogue — sets with no two elements differing by a nonzero square — is the
+Furstenberg–Sárközy problem [F, S]; its best published lower-bound exponent is `0.7527964558…`
+[K], and the digit method used below is Ruzsa's [R]. Every square-difference-free set is
+configuration-free (if `x, x + y, x + y²` all lie in `A` then `(x + y²) − x = y²`), so such
+exponents transfer to this problem; they are below both `γ₀` and `γ`.
+
+In Lean, sets are `Finset ℤ`; every subset of `[N]` is finite, so this is the same statement. In
+Theorem C, `γ₀` is the number `γ(65, 7, 17)` and nothing more: that Younis's residue sets at
+`m = 65` are admissible is taken from [Y] and re-checked in `scripts/check_chain.py`, not in Lean, so
+Theorem C is a comparison of two explicitly defined real numbers.
+
 Theorem A is Theorem 1.5 of [Y] with `k = 2`, `R₀ = ℤ/m`, and the periodic chain
 `R₀, R₁, R₂, R₁, R₂, …`; its exponent formula (1.2) evaluates to `γ(m, |R₁|, |R₂|)`. Theorem
 1.1 of [Y] is Theorem A at Younis's data `m = 65`, `|R₁| = 7`, `|R₂| = 17`. Theorem B is the
@@ -80,7 +96,9 @@ Two lemmas, then the argument.
 
     (v − u) / mˡ ≡ digit_ℓ(v) − digit_ℓ(u)   (mod m),
 
-where `digit_ℓ(x) = ⌊x / mˡ⌋ mod m` is the base-`m` digit of `x` at position `ℓ`.
+where `digit_ℓ(x) = ⌊x / mˡ⌋ mod m` is the base-`m` digit of `x` at position `ℓ`. (For a
+positive divisor Lean's Euclidean division is the floor, so this is `(x / mˡ) % m` as written in
+`RY/Defs.lean`, with the remainder in `{0, …, m − 1}`.)
 
 *Proof.* Write `v = u + mˡ t`. Then `⌊v / mˡ⌋ = ⌊u / mˡ⌋ + t`, and reducing modulo `m`
 gives `t ≡ digit_ℓ(v) − digit_ℓ(u)`. ∎
@@ -91,7 +109,8 @@ gives `t ≡ digit_ℓ(v) − digit_ℓ(u)`. ∎
 so their product `m` divides `z`. ∎
 
 **Proposition 3 (avoidance).** Let `m ≥ 2` be square-free and let `(S_i)_{i<Y}` be sets of
-residues such that for every `ℓ` with `2ℓ < Y`:
+digits — subsets of `{0, …, m − 1}`, residues identified with their representatives as in §2; this
+is the hypothesis `hS` of the Lean statement — such that for every `ℓ` with `2ℓ < Y`:
 
     (E_ℓ)  if r, r' ∈ S_{2ℓ} and c, c' ∈ S_ℓ with r − r' ≡ (c − c')² (mod m), then r = r'.
 
@@ -131,7 +150,11 @@ never occurs. Condition `(E_ℓ)` for each pair reads:
 * `(1, 2)`: a nonzero difference in `R₂` is not the square of a difference of `R₁` — (H2).
 
 So (H1) and (H2) are exactly what Proposition 3 needs, and `A_Y` is configuration-free for
-every `Y`.
+every `Y`. (The Lean development does not define this untruncated rule: `typ s` in `RY/Defs.lean` is
+the depth-`s` rule of §4 for every `s`, and `blockSet_ruleSet_configFree` in `RY/Rule.lean` proves
+configuration-freeness for that rule at every depth and every `Y`. The untruncated rule is used
+here only to describe the construction; the argument applies to it verbatim, and §4 checks that
+truncation introduces no new edge beyond `(1, 1)`.)
 
 **Relation to the chain condition of [Y].** Younis requires, for every `n ≥ 0`,
 `(R_{n+1} − R_{n+1}) ∩ (R_n − R_n)² ⊆ {0}` modulo `m`. For the chain `ℤ/m, R₁, R₂, R₁, R₂, …`
@@ -159,6 +182,12 @@ Define `type_s` like `type`, except that positions with `v₂(i) ≥ 2s + 1` rec
 * `type_s(i + P) = type_s(i)` with `P = 2^{2s+1}`: adding `P` does not change `v₂(i)` when
   `v₂(i) ≤ 2s`, and positions with `v₂ ≥ 2s + 1` all have type `1` (including `i = 0`).
 
+Neither the periodicity nor the position counts below are formalized as such. The Lean proves the
+product identity directly, by the phase recursion `∏_{i<2Q} |S_i| = |S_odd|^Q · ∏_{i<Q} |S'_i|`
+(`prod_sizeAt_split`, `prod_sizeAt_pow`, `prod_sizeAt_odd_phase` in `RY/Rule.lean`), whose value over
+one period is `prod_sizeAt_period`; `α_s` and `β_s` are the recursively defined `alpha`/`beta`, with
+the closed forms below as `alpha_spec`/`beta_spec`.
+
 Over one period `0 ≤ i < P`: `P/2` positions are odd (type `0`); for `1 ≤ v ≤ 2s` exactly
 `P / 2^{v+1}` positions have `v₂(i) = v`; and position `0` has type `1`. Hence
 
@@ -174,27 +203,40 @@ and `A^{(s)}_{qP} ⊆ [0, M_s^q)` with `M_s = m^P`. The block exponent is
     γ_s := log K_s / log M_s = 1/2 + (1/3 + 1/(6·4ˢ)) log_m a + (1/6 − 1/(6·4ˢ)) log_m b
          = γ(m, a, b) − (log b − log a) / (6 · 4ˢ · log m),
 
-which tends to `γ(m, a, b)` as `s → ∞`. (In the proof the products are computed by the
-recursion `∏_{i<2Q} |S_i| = |S_odd|^Q · ∏_{i<Q} |S'_i|`, where `S'` is the rule one level
-deeper; the closed forms above are what the recursion evaluates to over one period.)
+which tends to `γ(m, a, b)` as `s → ∞` (`blockCard_log_ratio` and `exists_depth_gt` in
+`RY/Numeric.lean`).
 
 ## 5. From blocks to the theorems
 
 **Lemma 4 (blocks to all `N`).** Let `M ≥ 2` and `K ≥ 1` be integers and `ρ ≤ log K / log M`
 a real number. If for every `q ≥ 0` the interval `[M^q]` contains a configuration-free set
-of size `K^q`, then for every `N ≥ 1` the interval `[N]` contains a configuration-free set of
-size at least `M^{−ρ} · N^ρ`.
+of size `K^q`, then there is `C > 0` such that for every `N ≥ 1` the interval `[N]` contains a
+configuration-free set of size at least `C · N^ρ`; one may take `C = M^{−ρ}` when `ρ > 0` and
+`C = 1` when `ρ ≤ 0`.
 
-*Proof.* Let `q = ⌊log_M N⌋`, so `M^q ≤ N < M^{q+1}`. The set for `[M^q]` lies in `[N]` and
-has size `K^q = M^{q · log K / log M} ≥ M^{qρ} = (M^{q+1})^ρ / M^ρ > N^ρ / M^ρ`. ∎
+*Proof.* If `ρ ≤ 0` then `N^ρ ≤ 1` for `N ≥ 1`, and `{1}` is a configuration-free subset of `[N]`,
+so `C = 1` works. Let `ρ > 0` and `q = ⌊log_M N⌋`, so `M^q ≤ N < M^{q+1}`. The set for `[M^q]`
+lies in `[N]` and has size `K^q = M^{q · log K / log M} ≥ M^{qρ} = (M^{q+1})^ρ / M^ρ > N^ρ / M^ρ`.
+(The step `(M^{q+1})^ρ > N^ρ` is where `ρ > 0` is used.) ∎
+
+In Lean the bound is first proved for the counting function, `C · N^ρ ≤ D(N)` (`younis_D`); the
+set required by Theorem A is then recovered from the fact that the supremum defining `D(N)` is
+attained (`exists_configFree_card_eq_D`, from `Nat.sSup_mem`: the competitor set contains `0` and
+is bounded by `N`). Monotonicity of `D` (`D_mono`) is what places the set built for `[M^q]` inside
+`[N]`.
 
 *Proof of Theorem A.* Given `ρ < γ(m, a, b)`, choose `s` so large that `γ_s > ρ` (possible
 because `4ˢ` is unbounded). Apply Lemma 4 with `M = M_s`, `K = K_s`, using the translated
 truncated digit sets `A^{(s)}_{qP} + 1 ⊆ [M_s^q]`, which are configuration-free by
-Proposition 3 and Section 4. The constant is `C = M_s^{−ρ}`. ∎
+Proposition 3 and Section 4. The constant is `C = M_s^{−ρ}` for `ρ > 0` and `C = 1` for `ρ ≤ 0`. ∎
 
 *Proof of Theorem B.* Verify (H1) and (H2) for the two residue sets modulo `145` — finite
-checks, carried out by `decide` in Lean — and that `145` is square-free. The pointwise
+checks — and that `145 = 5 · 29` is square-free. In Lean the hypotheses are not decided in their
+quantified form (the direct check of (H2) is `32 · 32 · 10 · 10 = 102,400` cases and does not
+terminate); each is reduced to a disjointness of two explicit finsets — the nonzero differences of
+one set against the squares available to the other — which `decide` settles under raised
+`maxRecDepth`/`maxHeartbeats`, and a bridging lemma (`sqDiffFree_of_disjoint`,
+`avoidSqDiffs_of_disjoint` in `RY/Instance.lean`) returns the quantified form. The pointwise
 statement is Theorem A. For the liminf: given `ρ < γ`, the pointwise bound gives
 `log D(N) / log N ≥ ρ + log C / log N` for `N ≥ 2`, whose right side tends to `ρ`; hence
 `liminf ≥ ρ` for every `ρ < γ`, so `liminf ≥ γ`. (The sequence is bounded: `1 ≤ D(N) ≤ N`
@@ -213,8 +255,11 @@ comparison of integer powers: `log_m t > p/q` if and only if `t^q > m^p`.
 * `γ < 0.77029`: `3200^230 < 145^373` gives `log_145 3200 < 373/230`, so
   `γ < 1/2 + 373/1380 = 0.770289…`.
 
-The integer inequalities are checked exactly (the largest numbers have about 1,200 digits).
-No floating-point or transcendental evaluation is involved.
+The integer inequalities are checked exactly; the largest numbers, `3200^230` and `145^373`, have
+807 decimal digits each. No floating-point or transcendental evaluation is involved. In Lean three
+of the four comparisons are `norm_num` evaluations; the last, `3200^230 < 145^373`, stalls
+`norm_num` and is discharged by `decide +kernel`, that is, by direct kernel evaluation of the two
+integers (`log3200_lt` in `RY/Numeric.lean`); this introduces no axiom.
 
 ## 7. How the data was found, and what is not claimed
 
@@ -235,17 +280,39 @@ other polynomial configurations.
 
 * `Challenge.lean` states Theorems A, B and C using only Mathlib: `younis_period_two`
   (Theorem A), `record_pointwise` and `record_liminf` (Theorem B), `younis_lt_record` and
-  `record_exponent_bounds` (Theorem C).
-* `Solution.lean` proves the same five statements from the library `RY`.
-* `RY/` contains the development: definitions shared with the Challenge; base-`m` digits
-  and Lemma 1; the digit sets and their cardinality; Proposition 3; the type assignment,
-  its truncation, periodicity and block counts; Lemma 4 and the passage to the pointwise and
-  liminf forms; the integer power comparisons of Section 6; the two finite checks at
-  `m = 145`; and the assembly of the five statements.
-* `Test/Axioms.lean` audits every declaration of the development for axioms; only
-  `propext`, `Classical.choice` and `Quot.sound` occur.
-* `scripts/check_chain.py` is a standalone check of the finite data and the integer power
-  comparisons in Python (standard library only), for readers without Lean.
+  `record_exponent_bounds` (Theorem C). Its five declarations are intentional `sorry`
+  placeholders: it is the statement surface to audit, with no proofs.
+* `Solution.lean` does not import `Challenge.lean`; it proves the same five statements from the
+  library `RY`.
+* `RY/Defs.lean` — the five Challenge definitions verbatim, plus `digit`, `blockSet`,
+  `digitsOf`/`allDigits`, the rule (`phase`, `typ`, `ruleSet`) and its sizes (`sizeAt`, `period`,
+  `alpha`, `beta`, `blockCard`).
+* `RY/Digits.lean` — Lemma 1 (`cast_ediv_eq_digit_sub`), the shape of `blockSet`
+  (`blockSet_nonneg`, `blockSet_lt`, `digit_mem`, `blockSet_card`), the maximal power of `m`
+  dividing a nonzero integer (`exists_maximal_pow_dvd`), and translation invariance of
+  configuration-freeness.
+* `RY/Avoid.lean` — Proposition 3 (`blockSet_configFree`).
+* `RY/Rule.lean` — the truncated rule, its edge validity (`typ_edge`, `ruleSet_edge`),
+  configuration-freeness of the construction (`blockSet_ruleSet_configFree`), and the block count
+  over one and over `q` periods (`prod_sizeAt_period`, `prod_sizeAt_pow`).
+* `RY/Asymptotics.lean` — `D` and its basic properties (`D_mono`, `D_le`, `one_le_D`,
+  `exists_configFree_card_eq_D`), the `+1` translation into `{1, …, N}`, the block bound
+  `D(M_s^q) ≥ K_s^q` (`blockCard_le_D`), Lemma 4 (`D_ge_of_blocks`) and the liminf passage
+  (`liminf_ge_of_pointwise`).
+* `RY/Numeric.lean` — the four integer power comparisons and Theorem C, the identity for
+  `log K_s / log M_s` (`blockCard_log_ratio`) and the choice of depth (`exists_depth_gt`).
+* `RY/Instance.lean` — the two finsets at `m = 145`, `Squarefree 145`, and (H1), (H2) by
+  `decide` on the finset reformulations with the bridging lemmas.
+* `RY/Main.lean` — the assembly of the five statements from the above.
+* `Test/Axioms.lean` audits every constant in the `NonlinearRoth` namespace and every private
+  declaration of an `RY.*` module for axioms; only `propext`, `Classical.choice` and `Quot.sound`
+  occur.
+* `scripts/check_chain.py` re-checks, in Python (standard library only), the finite data at both
+  `m = 145` and Younis's `m = 65`, the four integer power comparisons, the per-period type counts
+  and admissible position edges of the truncated rule for depths `0`–`3`, a direct enumeration of
+  `A_Y` at `m = 145`, `Y = 3` with an exhaustive configuration search (this depth reaches no
+  type-`2` position, so `R₂` enters only through the (H2) check), and three controls that must
+  fail, including the `m = 4` example of §3.
 
 ## References
 
@@ -253,6 +320,7 @@ other polynomial configurations.
 [R] I. Z. Ruzsa, *Difference sets without squares*, Period. Math. Hungar. 15 (1984), 205–209.
 [BG] R. Beigel and W. Gasarch, *Square-difference-free sets of size Ω(n^0.7334…)*, arXiv:0804.4892 (2008).
 [L] M. Lewko, *An improved lower bound related to the Furstenberg–Sárközy theorem*, Electron. J. Combin. 22 (2015), #P1.32.
+[L2] M. Lewko, *An improved non-linear Roth-type theorem in finite fields*, arXiv:2604.27501 (2026).
 [BL] V. Bergelson and A. Leibman, *Polynomial extensions of van der Waerden's and Szemerédi's theorems*, J. Amer. Math. Soc. 9 (1996), 725–753.
 [PP1] S. Peluse and S. Prendiville, *A polylogarithmic bound in the nonlinear Roth theorem*, Int. Math. Res. Not. IMRN 2022, no. 8, 5658–5684.
 [PP2] S. Peluse and S. Prendiville, *Quantitative bounds in the nonlinear Roth theorem*, Invent. Math. 238 (2024), 865–903.

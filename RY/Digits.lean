@@ -6,7 +6,7 @@ import RY.Defs
 Three groups of facts.
 
 * The **digit congruence** `cast_ediv_eq_digit_sub`: if `m ^ ℓ` divides `v - u`, then
-  `(v - u) / m ^ ℓ ≡ digit ℓ v - digit ℓ u (mod m)`. This is the only arithmetic input of
+  `(v - u) / m ^ ℓ ≡ digit ℓ v - digit ℓ u (mod m)`. This is the main arithmetic input of
   the avoidance argument, and its proof is `Int.add_mul_ediv_left` followed by a reduction
   mod `m`.
 * The **shape of `blockSet`**: its elements lie in `[0, m ^ Y)`, their digits below `Y` are
@@ -37,11 +37,6 @@ theorem cast_ediv_eq_digit_sub (m : ℕ) (hm : 0 < m) (ℓ : ℕ) (u v : ℤ)
   rw [hdiv, hvdiv]
   push_cast
   ring
-
-/-- `digit m i x` reduces mod `m` to `x / m ^ i`. -/
-theorem cast_digit (m i : ℕ) (x : ℤ) :
-    ((digit m i x : ℤ) : ZMod m) = ((x / (m : ℤ) ^ i : ℤ) : ZMod m) := by
-  simp only [digit, ZMod.intCast_mod]
 
 /-- Monotonicity of `i ↦ (m : ℤ) ^ i`, read off the `ℕ`-valued statement. -/
 theorem natCast_pow_le_pow_of_le {m : ℕ} (hm : 1 ≤ m) {i j : ℕ} (h : i ≤ j) :

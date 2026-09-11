@@ -9,8 +9,8 @@ Younis, "Lower bounds in the polynomial Szemerédi theorem"
 
         x,  x + y,  x + y^2      (y != 0)
 
-a construction of a large subset of {0, 1, ..., N - 1} containing no such
-configuration.  The construction is driven by a modulus m together with two
+a construction of a large subset of {1, ..., N} containing no such
+configuration (the digit sets below live in [0, m^Y) and are translated by +1).  The construction is driven by a modulus m together with two
 residue sets R1, R2 subset of Z_m satisfying the hypotheses below (this is the
 k = 2 case of the paper's construction).
 
