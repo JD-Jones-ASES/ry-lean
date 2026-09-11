@@ -64,11 +64,12 @@ witnesses, which live in the Solution.
 
 ## Conventions
 
-Sets are `Finset ℤ`; the ambient interval is `Finset.Icc 1 N` for a natural number `N`.
-Logarithms are natural logarithms (`Real.log`); the counting function `D N` is the largest
-size of a configuration-free subset of `{1, …, N}`. The base-`m` digit at position `i` of an
-integer `x` is `(x / m ^ i) % m` with Lean's Euclidean division; the digit sets are
-`Finset (ZMod m)`.
+Sets are `Finset ℤ`. A set lies in `{1, …, N}` when each of its elements `x` satisfies
+`1 ≤ x ∧ x ≤ N`; the two theorems that produce a set state this as the two inequalities, and
+the counting function `D N` — the largest size of a configuration-free subset of `{1, …, N}` —
+is defined with `Finset.Icc 1 N`. Logarithms are natural logarithms (`Real.log`). The base-`m`
+digit at position `i` of an integer `x` is `(x / m ^ i) % m` with Lean's Euclidean division; the
+digit sets are `Finset (ZMod m)`.
 
 This Mathlib-only file intentionally contains `sorry` placeholders. The corresponding
 declarations are proved in `Solution.lean`, which does not import this file.
@@ -113,14 +114,14 @@ theorem younis_period_two (m : ℕ) (hm : 2 ≤ m) (hsf : Squarefree m)
     (hR₂ : ∀ a ∈ R₂, ∀ b ∈ R₂, ∀ c ∈ R₁, ∀ d ∈ R₁, a - b = (c - d) ^ 2 → a = b)
     (ρ : ℝ) (hρ : ρ < exponent m R₁.card R₂.card) :
     ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, 1 ≤ N → ∃ A : Finset ℤ,
-      A ⊆ Finset.Icc 1 N ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
+      (∀ x ∈ A, 1 ≤ x ∧ x ≤ (N : ℤ)) ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
   sorry
 
 /-- **The lower bound at `m = 145`.** For every `ρ < 0.77028…` there is `C > 0` such that
 every `{1, …, N}` contains a configuration-free set of size at least `C N^ρ`. -/
 theorem record_pointwise (ρ : ℝ) (hρ : ρ < recordExponent) :
     ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, 1 ≤ N → ∃ A : Finset ℤ,
-      A ⊆ Finset.Icc 1 N ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
+      (∀ x ∈ A, 1 ≤ x ∧ x ≤ (N : ℤ)) ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
   sorry
 
 /-- **The same bound in liminf form:** `liminf log D(N) / log N ≥ 0.77028…`. For `N ≥ 2` one

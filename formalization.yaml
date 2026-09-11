@@ -186,7 +186,8 @@ alignment:
         Hypotheses: m >= 2 square-free; R_1, R_2 nonempty finsets of ZMod m; R_1
         square-difference-free; no nonzero difference of R_2 is the square of a difference
         of R_1. Conclusion: for every rho below the exponent, a constant C > 0 and, for every
-        N >= 1, a configuration-free subset of Finset.Icc 1 N of cardinality at least C N^rho.
+        N >= 1, a configuration-free finset A of integers with 1 <= x <= N for every x in A and
+        cardinality at least C N^rho (membership in {1,...,N} is stated as the two bounds).
     - source: "Not in the source paper: Theorem 1.5 (k = 2) instantiated at new data m = 145, |R_1| = 10, |R_2| = 32 — the analogue of Younis's Theorem 1.1, which is the instance at m = 65"
       lean: "NonlinearRoth.record_pointwise"
       module: "Solution"

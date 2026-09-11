@@ -41,11 +41,11 @@ theorem younis_period_two_internal (m : ℕ) (hm : 2 ≤ m) (hsf : Squarefree m)
     (hR₂ : ∀ a ∈ R₂, ∀ b ∈ R₂, ∀ c ∈ R₁, ∀ d ∈ R₁, a - b = (c - d) ^ 2 → a = b)
     (ρ : ℝ) (hρ : ρ < exponent m R₁.card R₂.card) :
     ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, 1 ≤ N → ∃ A : Finset ℤ,
-      A ⊆ Finset.Icc 1 N ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
+      (∀ x ∈ A, 1 ≤ x ∧ x ≤ (N : ℤ)) ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
   obtain ⟨C, hC, hD⟩ := younis_D m hm hsf R₁ R₂ h₁ h₂ hR₁ hR₂ ρ hρ
   refine ⟨C, hC, fun N hN => ?_⟩
   obtain ⟨A, hAsub, hAcf, hAcard⟩ := exists_configFree_card_eq_D N
-  exact ⟨A, hAsub, hAcf, by rw [hAcard]; exact hD N hN⟩
+  exact ⟨A, fun x hx => Finset.mem_Icc.mp (hAsub hx), hAcf, by rw [hAcard]; exact hD N hN⟩
 
 /-- `recordExponent` is the exponent of the data at `m = 145`. -/
 theorem exponent_R145 : exponent 145 R145₁.card R145₂.card = recordExponent := by
@@ -54,7 +54,7 @@ theorem exponent_R145 : exponent 145 R145₁.card R145₂.card = recordExponent 
 /-- **The lower bound at `m = 145`.** -/
 theorem record_pointwise_internal (ρ : ℝ) (hρ : ρ < recordExponent) :
     ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, 1 ≤ N → ∃ A : Finset ℤ,
-      A ⊆ Finset.Icc 1 N ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card :=
+      (∀ x ∈ A, 1 ≤ x ∧ x ≤ (N : ℤ)) ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card :=
   younis_period_two_internal 145 (by norm_num) squarefree_145 R145₁ R145₂
     R145₁_nonempty R145₂_nonempty hR145₁ hR145₂ ρ (by rw [exponent_R145]; exact hρ)
 
