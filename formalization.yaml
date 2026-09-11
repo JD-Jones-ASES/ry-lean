@@ -1,0 +1,215 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "ry-lean: sets avoiding {x, x+y, x+y²} — Younis's two-set construction and the exponent 0.77028"
+  description: >-
+    A Lean 4 proof of Younis's lower-bound construction for subsets of {1,...,N} with no
+    configuration {x, x+y, x+y^2} (y nonzero), in its two-set form: for every square-free
+    modulus m and residue sets R1, R2 modulo m with R1 square-difference-free and no
+    nonzero difference of R2 equal to the square of a difference of R1, the interval
+    {1,...,N} contains a configuration-free set of size at least C(rho) N^rho for every
+    rho below 1/2 + log|R1|/(3 log m) + log|R2|/(6 log m). The theorem is instantiated at
+    m = 145 with |R1| = 10 and |R2| = 32, giving the exponent 0.770287..., which is proved
+    to exceed Younis's exponent 0.768503... (m = 65, sizes 7 and 17) by exact comparisons
+    of integer powers; decimal bounds 0.7702 < gamma < 0.77029 are also proved, and the
+    bound is stated in liminf form for the counting function D(N).
+  authors: ["JD Jones"]
+  responsible_maintainers: ["JD Jones"]
+  license: "MIT"
+
+classification:
+  arxiv: ["math.NT", "math.CO"]
+  msc2020: ["11B30", "11B75", "05D10"]
+
+sources:
+  - title: "Lower bounds in the polynomial Szemerédi theorem"
+    authors: ["Khalid Younis"]
+    id: "arXiv:1908.06058"
+    type: "paper"
+    location: "https://arxiv.org/abs/1908.06058"
+    relationship: "formalizes"
+    author_endorsement: "not-contacted"
+    note: >-
+      Theorem 1.5 (k = 2, R_0 = Z/m, the periodic chain R_0, R_1, R_2, R_1, R_2, ...) is
+      the compared theorem younis_period_two; its exponent formula (1.2) evaluates to the
+      displayed exponent. Theorem 1.1 is this theorem at m = 65 with |R_1| = 7, |R_2| = 17.
+      The repository instantiates the same theorem at m = 145 with new residue sets and
+      proves the new exponent larger. The paper is a 2019 preprint (v1 only, no journal
+      version found as of 2026-09-11).
+  - title: "Difference sets without squares"
+    authors: ["Imre Z. Ruzsa"]
+    id: "doi:10.1007/BF02454169"
+    type: "paper"
+    location: "https://doi.org/10.1007/BF02454169"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: "Periodica Mathematica Hungarica 15 (1984), 205-209. The base-m digit construction that Younis's theorem extends; Younis's modulus 65 is Ruzsa's."
+  - title: "An improved lower bound related to the Furstenberg–Sárközy theorem"
+    authors: ["Mark Lewko"]
+    type: "paper"
+    location: "https://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i1p32"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: "Electronic Journal of Combinatorics 22 (2015), #P1.32. Exhaustive census of square-difference-free residue sets below modulus 533; the search pattern used to find the residue sets here."
+  - title: "Square-difference-free sets of size Ω(n^0.7334...)"
+    authors: ["Richard Beigel", "William Gasarch"]
+    id: "arXiv:0804.4892"
+    type: "paper"
+    location: "https://arxiv.org/abs/0804.4892"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: "Independent record at modulus 205 for the Furstenberg–Sárközy problem; same search pattern."
+  - title: "A polylogarithmic bound in the nonlinear Roth theorem"
+    authors: ["Sarah Peluse", "Sean Prendiville"]
+    id: "doi:10.1093/imrn/rnaa261"
+    type: "paper"
+    location: "https://doi.org/10.1093/imrn/rnaa261"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: "IMRN 2022, no. 8, 5658-5684. The upper bound N (log N)^(-c) for configuration-free subsets of {1,...,N}; the other side of the problem, not formalized here."
+  - title: "Polynomial extensions of van der Waerden's and Szemerédi's theorems"
+    authors: ["Vitaly Bergelson", "Alexander Leibman"]
+    id: "doi:10.1090/S0894-0347-96-00194-4"
+    type: "paper"
+    location: "https://doi.org/10.1090/S0894-0347-96-00194-4"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: "J. Amer. Math. Soc. 9 (1996), 725-753. The qualitative polynomial Szemerédi theorem, of which the configuration {x, x+y, x+y^2} is the model case."
+  - title: "Square-Difference-Free Sets beyond the Three-Quarter Barrier"
+    authors: ["Dmitry Krachun"]
+    id: "arXiv:2608.01325"
+    type: "paper"
+    location: "https://arxiv.org/abs/2608.01325"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      The best published Furstenberg–Sárközy lower-bound exponent, 0.7527964558...; every
+      square-difference-free set is configuration-free, so it transfers to this problem, and
+      it is below both exponents compared here.
+
+status:
+  scope: >-
+    Five compared declarations. younis_period_two is the two-set form of Younis's Theorem 1.5
+    for every square-free modulus m >= 2 and every nonempty admissible pair (R1, R2), in the
+    pointwise form "for every rho below the exponent there is C > 0 with a configuration-free
+    subset of {1,...,N} of size at least C N^rho for all N >= 1". record_pointwise and
+    record_liminf are its instance at m = 145 (|R1| = 10, |R2| = 32), the latter as a liminf
+    bound for the counting function D. younis_lt_record and record_exponent_bounds are exact
+    inequalities between real numbers defined by logarithms. Configurations use Younis's
+    definition: y is any nonzero integer, negative values included, and the three integers
+    need not be distinct. Nothing is claimed about upper bounds, optimality of the exponent,
+    optimality of the residue sets, or other configurations. The intentional placeholders in
+    Challenge.lean are excluded from proof counts; Solution does not import Challenge.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "NonlinearRoth.younis_period_two"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "NonlinearRoth.record_pointwise"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "NonlinearRoth.record_liminf"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "NonlinearRoth.younis_lt_record"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "NonlinearRoth.record_exponent_bounds"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude Fable 5.1 (Anthropic)", "Claude Opus (Anthropic)"]
+      framework: "Claude Code with parallel subagents"
+      tool_setup: >-
+        Claude Fable 5.1 planned the formalization and wrote the statements and
+        documentation; Claude Opus subagents reviewed the statements against the source,
+        wrote the Lean proofs module by module, searched the literature and registries, and
+        audited the result. Lean 4.33.0 and Mathlib are pinned. Finite checks use ordinary
+        decide; the exponent comparisons are kernel-checked comparisons of integer powers.
+        The residue sets at m = 145 were found by an exact computer search (a CP-SAT solver
+        as a search tool); they are verified in Lean and by the standalone Python checker,
+        so the solver is not in the trust chain.
+      prompting_notes: >-
+        The human operator selected the problem, required an unconditional theorem with
+        explicit hypotheses matching the source, self-contained documentation, and an exact
+        (non-numerical) proof of the exponent comparison.
+  spend_usd: "not tracked"
+  notes: "See DISCLOSURE.md. Prompt, token, and monetary accounting was not retained."
+
+fidelity:
+  divergences: >-
+    The compared theorem is the k = 2, period-two, R_0 = Z/m specialisation of Younis's
+    Theorem 1.5, stated for arbitrary square-free m >= 2 and arbitrary nonempty admissible
+    (R_1, R_2); Younis's general chains (arbitrary k, arbitrary sequences R_n) are not
+    formalized. The hypotheses are the two edge conditions R_0 -> R_1 and R_1 -> R_2 of
+    the chain condition; the remaining edges of the periodic chain follow from the first and
+    are derived, not assumed. The conclusion is stated with an arbitrary exponent rho below
+    the displayed exponent and a constant depending on rho, which is Younis's
+    |A| >>_{m, eps} N^{gamma - eps}. Sets live in Finset ℤ inside Finset.Icc 1 N. The
+    construction is analysed through a periodic truncation of the digit rule (each depth
+    gives a slightly smaller exponent, converging to the displayed one); this is a proof
+    device and does not change the statements.
+
+review:
+  status: "self-assessed"
+  notes: >-
+    No independent human expert review or source-author endorsement is recorded. AI agents
+    developed and cross-reviewed the proof; the statements were reviewed against the source
+    text for dropped hypotheses and junk values. VERIFICATION.md records the mechanical
+    checks completed at this snapshot. Mechanical correctness and statement agreement do not
+    establish priority, significance, or the correctness of any informal interpretation.
+
+alignment:
+  namespace: "NonlinearRoth"
+  statements:
+    - source: "Younis, arXiv:1908.06058, Theorem 1.5 with k = 2, R_0 = Z/m, chain R_0, R_1, R_2, R_1, R_2, ..."
+      lean: "NonlinearRoth.younis_period_two"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Hypotheses: m >= 2 square-free; R_1, R_2 nonempty finsets of ZMod m; R_1
+        square-difference-free; no nonzero difference of R_2 is the square of a difference
+        of R_1. Conclusion: for every rho below the exponent, a constant C > 0 and, for every
+        N >= 1, a configuration-free subset of Finset.Icc 1 N of cardinality at least C N^rho.
+    - source: "Younis, arXiv:1908.06058, Theorem 1.1 — the same statement at new data (m = 145, |R_1| = 10, |R_2| = 32)"
+      lean: "NonlinearRoth.record_pointwise"
+      module: "Solution"
+      status: "proved"
+      note: "The exponent is recordExponent = 1/2 + log 10/(3 log 145) + log 32/(6 log 145)."
+    - source: "liminf form of the same bound"
+      lean: "NonlinearRoth.record_liminf"
+      module: "Solution"
+      status: "proved"
+      note: "recordExponent <= liminf log D(N) / log N, where D N is the largest size of a configuration-free subset of {1,...,N}."
+    - source: "comparison with Younis's exponent 1/2 + log 7/(3 log 65) + log 17/(6 log 65)"
+      lean: "NonlinearRoth.younis_lt_record"
+      module: "Solution"
+      status: "proved"
+      note: "Proved from 833^13 < 65^21 and 3200^13 > 145^21."
+    - source: "decimal bounds"
+      lean: "NonlinearRoth.record_exponent_bounds"
+      module: "Solution"
+      status: "proved"
+      note: "0.7702 < recordExponent < 0.77029, from 3200^37 > 145^60 and 3200^230 < 145^373."
+
+acknowledgements: >-
+  Khalid Younis for the theorem and construction; Imre Ruzsa, Mark Lewko, Richard Beigel and
+  William Gasarch for the digit method and the residue-set searches it rests on; Lean,
+  Mathlib, Comparator, lean4export, NanoDa, Landrun, and the Palomar policy and verifier
+  projects. AI assistance is disclosed above and in DISCLOSURE.md.
