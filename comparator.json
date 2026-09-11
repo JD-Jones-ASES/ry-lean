@@ -1,0 +1,20 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "NonlinearRoth.younis_period_two",
+    "NonlinearRoth.record_pointwise",
+    "NonlinearRoth.record_liminf",
+    "NonlinearRoth.younis_lt_record",
+    "NonlinearRoth.record_exponent_bounds"
+  ],
+  "definition_names": [
+    "NonlinearRoth.ConfigFree",
+    "NonlinearRoth.exponent",
+    "NonlinearRoth.younisExponent",
+    "NonlinearRoth.recordExponent",
+    "NonlinearRoth.D"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}
