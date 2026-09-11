@@ -131,18 +131,109 @@ theorem recordExponent_upper : recordExponent < 0.77029 := by
 
 /-! ## The exponent of one block, and the choice of depth -/
 
+/-- `α_s` as a real number: `(2 · 4 ^ s + 1) / 3`. -/
+theorem alpha_cast (s : ℕ) : ((alpha s : ℕ) : ℝ) = (2 * (4 : ℝ) ^ s + 1) / 3 := by
+  have h : (3 : ℝ) * ((alpha s : ℕ) : ℝ) = 2 * (4 : ℝ) ^ s + 1 := by
+    exact_mod_cast alpha_spec s
+  linarith
+
+/-- `β_s` as a real number: `(4 ^ s − 1) / 3`. -/
+theorem beta_cast (s : ℕ) : ((beta s : ℕ) : ℝ) = ((4 : ℝ) ^ s - 1) / 3 := by
+  have h : (3 : ℝ) * ((beta s : ℕ) : ℝ) + 1 = (4 : ℝ) ^ s := by
+    exact_mod_cast beta_spec s
+  linarith
+
+/-- `log K_s = 4 ^ s log m + α_s log a + β_s log b`. -/
+theorem log_blockCard (m a b s : ℕ) (hm : 1 ≤ m) (ha : 1 ≤ a) (hb : 1 ≤ b) :
+    Real.log ((blockCard m a b s : ℕ) : ℝ)
+      = (4 : ℝ) ^ s * Real.log (m : ℝ) + ((alpha s : ℕ) : ℝ) * Real.log (a : ℝ)
+        + ((beta s : ℕ) : ℝ) * Real.log (b : ℝ) := by
+  have hm0 : (m : ℝ) ≠ 0 := by
+    have : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+    exact ne_of_gt this
+  have ha0 : (a : ℝ) ≠ 0 := by
+    have : (0 : ℝ) < (a : ℝ) := by exact_mod_cast ha
+    exact ne_of_gt this
+  have hb0 : (b : ℝ) ≠ 0 := by
+    have : (0 : ℝ) < (b : ℝ) := by exact_mod_cast hb
+    exact ne_of_gt this
+  simp only [blockCard]
+  push_cast
+  rw [Real.log_mul (mul_ne_zero (pow_ne_zero _ hm0) (pow_ne_zero _ ha0)) (pow_ne_zero _ hb0),
+    Real.log_mul (pow_ne_zero _ hm0) (pow_ne_zero _ ha0), Real.log_pow, Real.log_pow,
+    Real.log_pow]
+  push_cast
+  ring
+
+/-- `log M_s = 2 · 4 ^ s · log m`. -/
+theorem log_pow_period (m s : ℕ) :
+    Real.log ((m ^ period s : ℕ) : ℝ) = 2 * (4 : ℝ) ^ s * Real.log (m : ℝ) := by
+  rw [period_eq]
+  push_cast
+  rw [Real.log_pow]
+  push_cast
+  ring
+
 /-- `log K_s / log M_s = γ − (log b − log a) / (6 · 4 ^ s · log m)`. -/
 theorem blockCard_log_ratio (m a b s : ℕ) (hm : 2 ≤ m) (ha : 1 ≤ a) (hb : 1 ≤ b) :
     Real.log ((blockCard m a b s : ℕ) : ℝ) / Real.log ((m ^ period s : ℕ) : ℝ)
       = exponent m a b
         - (Real.log (b : ℝ) - Real.log (a : ℝ)) / (6 * 4 ^ s * Real.log (m : ℝ)) := by
-  sorry
+  have hm1 : (1 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+  have hL : 0 < Real.log (m : ℝ) := Real.log_pos hm1
+  have hL0 : Real.log (m : ℝ) ≠ 0 := ne_of_gt hL
+  have h40 : ((4 : ℝ) ^ s) ≠ 0 := by positivity
+  rw [log_blockCard m a b s (by omega) ha hb, log_pow_period m s, exponent_eq, alpha_cast,
+    beta_cast]
+  field_simp
+  ring
+
+/-- `n < 4 ^ n`: the Archimedean witness, with no search. -/
+theorem lt_four_pow (n : ℕ) : n < 4 ^ n := by
+  induction n with
+  | zero => norm_num
+  | succ k ih =>
+      have h1 : 1 ≤ 4 ^ k := Nat.one_le_pow _ _ (by norm_num)
+      have h2 : 4 ^ (k + 1) = 4 ^ k * 4 := pow_succ 4 k
+      omega
 
 /-- **The Archimedean step.** Below the exponent there is a depth whose block exponent
 already exceeds `ρ`. -/
 theorem exists_depth_gt (m a b : ℕ) (hm : 2 ≤ m) (ha : 1 ≤ a) (hb : 1 ≤ b) (ρ : ℝ)
     (hρ : ρ < exponent m a b) :
     ∃ s : ℕ, ρ ≤ Real.log ((blockCard m a b s : ℕ) : ℝ) / Real.log ((m ^ period s : ℕ) : ℝ) := by
-  sorry
+  have hm1 : (1 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+  have hL : 0 < Real.log (m : ℝ) := Real.log_pos hm1
+  have hE : 0 < exponent m a b - ρ := sub_pos.mpr hρ
+  rcases le_or_gt (Real.log (b : ℝ) - Real.log (a : ℝ)) 0 with hd | hd
+  · -- The correction term is already `≤ 0` at depth `0`.
+    refine ⟨0, ?_⟩
+    have hpos : (0 : ℝ) < 6 * (4 : ℝ) ^ (0 : ℕ) * Real.log (m : ℝ) :=
+      mul_pos (by positivity) hL
+    have hkey : (Real.log (b : ℝ) - Real.log (a : ℝ)) /
+        (6 * (4 : ℝ) ^ (0 : ℕ) * Real.log (m : ℝ)) ≤ exponent m a b - ρ := by
+      rw [div_le_iff₀ hpos]
+      have := mul_pos hE hpos
+      linarith
+    rw [blockCard_log_ratio m a b 0 hm ha hb]
+    linarith
+  · -- Choose a depth with `4 ^ s` beyond `(log b − log a) / (6 log m (γ − ρ))`.
+    have hden : (0 : ℝ) < 6 * Real.log (m : ℝ) * (exponent m a b - ρ) :=
+      mul_pos (by linarith) hE
+    obtain ⟨n, hn⟩ :=
+      exists_nat_gt ((Real.log (b : ℝ) - Real.log (a : ℝ)) /
+        (6 * Real.log (m : ℝ) * (exponent m a b - ρ)))
+    have hn4 : (n : ℝ) < (4 : ℝ) ^ n := by exact_mod_cast lt_four_pow n
+    have hlt : (Real.log (b : ℝ) - Real.log (a : ℝ)) /
+        (6 * Real.log (m : ℝ) * (exponent m a b - ρ)) < (4 : ℝ) ^ n := lt_trans hn hn4
+    have h2 := (div_lt_iff₀ hden).mp hlt
+    refine ⟨n, ?_⟩
+    have hpos : (0 : ℝ) < 6 * (4 : ℝ) ^ n * Real.log (m : ℝ) := mul_pos (by positivity) hL
+    have hkey : (Real.log (b : ℝ) - Real.log (a : ℝ)) /
+        (6 * (4 : ℝ) ^ n * Real.log (m : ℝ)) ≤ exponent m a b - ρ := by
+      rw [div_le_iff₀ hpos]
+      nlinarith [h2]
+    rw [blockCard_log_ratio m a b n hm ha hb]
+    linarith
 
 end NonlinearRoth
