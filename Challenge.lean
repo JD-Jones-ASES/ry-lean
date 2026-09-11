@@ -9,7 +9,7 @@ so a configuration-free set contains no two consecutive integers; for `y = -1` t
 `x, x - 1, x + 1`.) This is the model case, with polynomials `y` and `y²`, of the polynomial
 Szemerédi theorem: Bergelson and Leibman proved that a configuration-free subset of
 `{1, …, N}` has size `o(N)`, and Peluse and Prendiville proved the quantitative bound
-`O(N (log N)^(-c))`. The question here is the other direction: how large can a
+`N (log N)^(-c)` for some `c > 0`. The question here is the other direction: how large can a
 configuration-free subset of `{1, …, N}` be?
 
 ## The construction
@@ -21,18 +21,25 @@ Fix a square-free modulus `m ≥ 2` and two nonempty sets of residues `R₁, R�
 * no two distinct elements of `R₂` differ by the square of a difference of two
   elements of `R₁`.
 
-Younis (2019) showed that from such data one obtains, for every `ε > 0`, configuration-free
+These two conditions are exactly Younis's chain condition — no nonzero difference of two
+elements of `R_(n+1)` is the square of a difference of two elements of `R_n`, modulo `m` —
+for the period-two chain `R₀ = ℤ/m, R₁, R₂, R₁, R₂, …`: the first is the edge `R₀ → R₁`,
+and, since squares of `R₂`-differences are in particular squares, it also gives the edge
+`R₂ → R₁`; the second is the edge `R₁ → R₂`.
+
+Younis (*Lower bounds in the polynomial Szemerédi theorem*, arXiv:1908.06058, Theorems 1.1
+and 1.5) showed that from such data one obtains, for every `ε > 0`, configuration-free
 subsets of `{1, …, N}` of size at least `c(ε) N^(γ - ε)`, where
 
   `γ = 1/2 + log |R₁| / (3 log m) + log |R₂| / (6 log m)`.
 
-The elements of the set are the integers whose base-`m` digits are constrained position by
-position: an arbitrary digit at each odd position, a digit from `R₁` at position `0` and at
-the even positions whose `2`-adic valuation is odd, and a digit from `R₂` at the even
-positions whose `2`-adic valuation is even. Younis exhibited such data at `m = 65` with
-`|R₁| = 7` and `|R₂| = 17`, giving the exponent `0.7685…`.
+After a translation into `{1, …, N}`, the elements of the set are the integers whose base-`m`
+digits are constrained position by position: an arbitrary digit at each odd position, a digit
+from `R₁` at position `0` and at the positive even positions whose `2`-adic valuation is odd,
+and a digit from `R₂` at the positive even positions whose `2`-adic valuation is even. Younis
+exhibited such data at `m = 65` with `|R₁| = 7` and `|R₂| = 17`, giving the exponent `0.7685…`.
 
-## What is proved here
+## What is claimed here
 
 * `younis_period_two` is Younis's theorem for this two-set construction, for every
   square-free modulus `m ≥ 2` and every admissible pair `R₁, R₂`, with the exponent above.
@@ -65,7 +72,9 @@ declarations are proved in `Solution.lean`, which does not import this file.
 
 namespace NonlinearRoth
 
-/-- `A` contains no configuration `{x, x + y, x + y²}` with `y ≠ 0`. -/
+/-- `A` contains no configuration `{x, x + y, x + y²}` with `y ≠ 0`. Following Younis,
+*non-trivial* is a condition on `y` alone (`y ∈ ℤ ∖ {0}`, negative values included); the
+three integers are not required to be distinct. -/
 def ConfigFree (A : Finset ℤ) : Prop :=
   ∀ x y : ℤ, y ≠ 0 → x ∈ A → x + y ∈ A → x + y ^ 2 ∈ A → False
 
@@ -80,7 +89,9 @@ noncomputable def younisExponent : ℝ := exponent 65 7 17
 /-- The exponent of the construction at `m = 145`, `|R₁| = 10`, `|R₂| = 32`: `0.77028…`. -/
 noncomputable def recordExponent : ℝ := exponent 145 10 32
 
-/-- The largest size of a configuration-free subset of `{1, …, N}`. -/
+/-- The largest size of a configuration-free subset of `{1, …, N}`. The set below contains `0`
+(take `A = ∅`) and is bounded above by `N`, so the `sSup` is attained: `D N` is a genuine
+maximum, not a junk value. -/
 noncomputable def D (N : ℕ) : ℕ :=
   sSup {k : ℕ | ∃ A : Finset ℤ, A ⊆ Finset.Icc 1 N ∧ ConfigFree A ∧ A.card = k}
 
@@ -89,7 +100,8 @@ noncomputable def D (N : ℕ) : ℕ :=
 elements of `R₂` differing by the square of a difference of two elements of `R₁`. Then for
 every `ρ` below the exponent `1/2 + log |R₁| / (3 log m) + log |R₂| / (6 log m)` there is a
 constant `C > 0` such that every interval `{1, …, N}` contains a configuration-free set of
-size at least `C N^ρ`. -/
+size at least `C N^ρ`. This is Theorem 1.5 of arXiv:1908.06058 with `k = 2` for the chain
+`ℤ/m, R₁, R₂, R₁, R₂, …`, whose exponent (1.2) evaluates to the displayed one. -/
 theorem younis_period_two (m : ℕ) (hm : 2 ≤ m) (hsf : Squarefree m)
     (R₁ R₂ : Finset (ZMod m)) (h₁ : R₁.Nonempty) (h₂ : R₂.Nonempty)
     (hR₁ : ∀ a ∈ R₁, ∀ b ∈ R₁, ∀ d : ZMod m, a - b = d ^ 2 → a = b)
@@ -106,7 +118,8 @@ theorem record_pointwise (ρ : ℝ) (hρ : ρ < recordExponent) :
       A ⊆ Finset.Icc 1 N ∧ ConfigFree A ∧ C * (N : ℝ) ^ ρ ≤ A.card := by
   sorry
 
-/-- **The same bound in liminf form:** `liminf log D(N) / log N ≥ 0.77028…`. -/
+/-- **The same bound in liminf form:** `liminf log D(N) / log N ≥ 0.77028…`. For `N ≥ 2` one
+has `1 ≤ D N ≤ N`, so the sequence lies in `[0, 1]` and the `liminf` is the genuine one. -/
 theorem record_liminf :
     recordExponent ≤ Filter.liminf (fun N : ℕ => Real.log (D N) / Real.log N) Filter.atTop := by
   sorry
